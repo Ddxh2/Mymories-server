@@ -1,4 +1,5 @@
 import User from "../models/user.js";
+import NodeRSA from "node-rsa";
 
 const stringHash = (string) => {
   if (!string || string.length === 0) {
@@ -17,16 +18,20 @@ const stringHash = (string) => {
 };
 
 export const logIn = async (req, res) => {
-  const { username, password } = req.body;
+  const { username, password: encryptedPassword } = req.body;
   try {
     const user = await User.findOne({ username });
-    if (stringHash(password) === user.password) {
+    const key = new NodeRSA(process.env.PRIVATE_KEY);
+    const decryptedPassword = key.decrypt(encryptedPassword, "utf8");
+    if (stringHash(decryptedPassword) === user.password) {
       res.status(200).json(true);
+      //Wrong password
     } else {
       res.status(401).json(false);
     }
   } catch (error) {
-    res.status(404).json({ error });
+    //Wrong Username
+    res.status(404).json(false);
   }
 };
 
