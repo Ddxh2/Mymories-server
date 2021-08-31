@@ -36,8 +36,13 @@ export const logIn = async (req, res) => {
 };
 
 export const createUser = async (req, res) => {
-  const { username, password } = req.body;
-  const newUser = new User({ username, password: stringHash(password) });
+  const { username, password: encryptedPassword } = req.body;
+  const key = new NodeRSA(process.env.PRIVATE_KEY);
+  const decryptedPassword = key.decrypt(encryptedPassword, "utf8");
+  const newUser = new User({
+    username,
+    password: stringHash(decryptedPassword),
+  });
   try {
     await newUser.save();
     res.status(201).json(true);
