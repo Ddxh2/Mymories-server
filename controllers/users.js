@@ -1,4 +1,5 @@
 import User from "../models/user.js";
+import NodeRSA from "node-rsa";
 
 const stringHash = (string) => {
   if (!string || string.length === 0) {
@@ -17,25 +18,44 @@ const stringHash = (string) => {
 };
 
 export const logIn = async (req, res) => {
-  const { username, password } = req.body;
+  const { username, password: encryptedPassword } = req.body;
   try {
     const user = await User.findOne({ username });
-    if (stringHash(password) === user.password) {
-      res.status(200).json(true);
+    if (user === null) {
+      // Wrong Username
+      res.status(403).json(false);
     } else {
-      res.status(401).json(false);
+      const key = new NodeRSA(process.env.PRIVATE_KEY);
+      const decryptedPassword = key.decrypt(encryptedPassword, "utf8");
+      if (stringHash(decryptedPassword) === user.password) {
+        res.status(200).json(true);
+        // Wrong Password
+      } else {
+        res.status(401).json(false);
+      }
     }
   } catch (error) {
-    res.status(404).json({ error });
+    res.status(404).json(false);
   }
 };
 
 export const createUser = async (req, res) => {
-  const { username, password } = req.body;
-  const newUser = new User({ username, password: stringHash(password) });
+  const { username, password: encryptedPassword } = req.body;
   try {
-    await newUser.save();
-    res.status(201).json(true);
+    const user = await User.findOne({ username });
+    if (user !== null) {
+      //Username Taken
+      res.status(403).json(false);
+    } else {
+      const key = new NodeRSA(process.env.PRIVATE_KEY);
+      const decryptedPassword = key.decrypt(encryptedPassword, "utf8");
+      const newUser = new User({
+        username,
+        password: stringHash(decryptedPassword),
+      });
+      await newUser.save();
+      res.status(201).json(true);
+    }
   } catch (error) {
     res.status(409).json(error);
   }
