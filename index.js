@@ -6,6 +6,7 @@ import dotenv from "dotenv";
 
 import postRoutes from "./routes/posts.js";
 import userRoutes from "./routes/users.js";
+import friendshipRoutes from "./routes/friendships.js";
 
 const app = express();
 dotenv.config();
@@ -32,3 +33,4 @@ mongoose
 
 app.use("/posts", postRoutes);
 app.use("/users", userRoutes);
+app.use("/friendships", friendshipRoutes);

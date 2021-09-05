@@ -6,6 +6,7 @@ import {
   updatePost,
   deletePost,
   likePost,
+  getPostsForMe,
 } from "../controllers/posts.js";
 
 const router = express.Router();
@@ -15,5 +16,6 @@ router.post("/", createPost);
 router.patch("/:id", updatePost);
 router.delete("/:id", deletePost);
 router.patch("/:id/likePost", likePost);
+router.get("/:userId", getPostsForMe);
 
 export default router;
