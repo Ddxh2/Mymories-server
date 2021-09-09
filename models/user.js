@@ -11,6 +11,7 @@ const userSchema = mongoose.Schema({
     unique: true,
     required: true,
   },
+  profileImage: String,
 });
 
 const User = mongoose.model("User", userSchema);

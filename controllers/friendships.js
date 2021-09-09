@@ -1,4 +1,5 @@
 import Friendship from "../models/friendship.js";
+import { idValid } from "./utils.js";
 
 export const getFriendships = async (req, res) => {
   try {
@@ -36,13 +37,27 @@ export const addFriendship = async (req, res) => {
         },
       ],
     });
-    if (!!existingFriendships && !!existingFriendships) {
+    if (!!existingFriendships && !!existingFriendships.length) {
       res.status(401);
     } else {
       const newFriendship = new Friendship({ userId1, userId2 });
       await newFriendship.save();
+
       res.status(201).json(newFriendship);
     }
+  } catch (error) {
+    res.status(403).json(error);
+  }
+};
+
+export const deleteFriendship = async (req, res) => {
+  const { friendshipId: _id } = req.params;
+  try {
+    if (!idValid(_id)) {
+      res.status(404).json("No friendship with that id");
+    }
+    await Friendship.findByIdAndRemove(_id);
+    res.json(true);
   } catch (error) {
     res.status(403).json(error);
   }
