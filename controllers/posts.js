@@ -1,8 +1,7 @@
-import mongoose from "mongoose";
 import Post from "../models/post.js";
 import Friendship from "../models/friendship.js";
 
-const idValid = (id) => mongoose.Types.ObjectId.isValid(id);
+import { idValid } from "./utils.js";
 
 export const getPosts = async (req, res) => {
   try {
@@ -22,7 +21,8 @@ export const getPostsForMe = async (req, res) => {
     const authorIds = (friendships || []).reduce(
       (acc, curr) => {
         const { userId1, userId2 } = curr;
-        if (userId1 === userId) {
+
+        if (userId1.equals(userId)) {
           acc.push(userId2);
         } else {
           acc.push(userId1);
@@ -32,8 +32,21 @@ export const getPostsForMe = async (req, res) => {
       [userId]
     );
     const posts = await Post.find({ authorId: { $in: authorIds } });
+
     res.status(200).json(posts);
-  } catch (error) {}
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const getMyPosts = async (req, res) => {
+  const { userId } = req.params;
+  try {
+    const posts = await Post.find({ authorId: userId });
+    res.status(200).json(posts);
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 export const createPost = async (req, res) => {
