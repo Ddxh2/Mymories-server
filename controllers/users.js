@@ -32,10 +32,27 @@ export const getUser = async (req, res) => {
   }
 };
 
-export const getUsers = async (req, res) => {
+export const getUsers = async (_, res) => {
   try {
     const users = await User.find();
     res.status(200).json(users);
+  } catch (error) {
+    res.status(404).json(error);
+  }
+};
+
+export const findUsersByUsername = async (req, res) => {
+  const { username } = req.params;
+  try {
+    const users = await User.find({
+      username: { $regex: ".*" + username + ".*" },
+    });
+    const processedUsers = users.map(({ _id: id, username, profileImage }) => ({
+      id,
+      username,
+      profileImage,
+    }));
+    res.status(200).json(processedUsers);
   } catch (error) {
     res.status(404).json(error);
   }
