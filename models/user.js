@@ -12,6 +12,7 @@ const userSchema = mongoose.Schema({
     required: true,
   },
   profileImage: String,
+  isPrivate: Boolean,
 });
 
 const User = mongoose.model("User", userSchema);
