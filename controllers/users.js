@@ -3,7 +3,7 @@ import NodeRSA from "node-rsa";
 
 import { idValid } from "./utils.js";
 
-const PRIVATE_KEY = process.env.PRIVATE_KEY
+const PRIVATE_KEY = process.env.PRIVATE_KEY.replace(/\\n/gm, "\n")
 
 const stringHash = (string) => {
   if (!string || string.length === 0) {
