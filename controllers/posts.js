@@ -3,15 +3,6 @@ import Friendship from "../models/friendship.js";
 
 import { idValid } from "./utils.js";
 
-export const getPosts = async (req, res) => {
-  try {
-    const posts = await Post.find().sort("-createdAt");
-    res.status(200).json(posts);
-  } catch (error) {
-    res.status(404).json({ message: error.message });
-  }
-};
-
 export const getPostsForMe = async (req, res) => {
   const { userId } = req.params;
   try {

@@ -32,23 +32,6 @@ export const getUser = async (req, res) => {
   }
 };
 
-export const getUsers = async (_, res) => {
-  try {
-    const users = await User.find();
-    const processedUsers = users.map(
-      ({ _id, username, profileImage, isPrivate }) => ({
-        _id,
-        username,
-        profileImage,
-        isPrivate,
-      })
-    );
-    res.status(200).json(processedUsers);
-  } catch (error) {
-    res.status(404).json(error);
-  }
-};
-
 export const findUsersByUsername = async (req, res) => {
   const { username } = req.params;
   try {
