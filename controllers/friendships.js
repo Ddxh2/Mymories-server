@@ -1,15 +1,6 @@
 import Friendship from "../models/friendship.js";
 import { idValid } from "./utils.js";
 
-export const getFriendships = async (req, res) => {
-  try {
-    const friendships = await Friendship.find();
-    res.status(200).json(friendships);
-  } catch (error) {
-    res.status(404).json(error);
-  }
-};
-
 export const getMyFriends = async (req, res) => {
   const { userId } = req.params;
   try {
