@@ -3,6 +3,8 @@ import NodeRSA from "node-rsa";
 
 import { idValid } from "./utils.js";
 
+const PRIVATE_KEY = process.env.PRIVATE_KEY
+
 const stringHash = (string) => {
   if (!string || string.length === 0) {
     return null;
@@ -61,7 +63,10 @@ export const logIn = async (req, res) => {
       // Wrong Username
       res.status(403).json({ success: false });
     } else {
-      const key = new NodeRSA(process.env.PRIVATE_KEY);
+      
+      console.log(PRIVATE_KEY)
+      console.log(PRIVATE_KEY.replace(/\\n/gm, "\n"))
+      const key = new NodeRSA(PRIVATE_KEY);
       const decryptedPassword = key.decrypt(encryptedPassword, "utf8");
       if (stringHash(decryptedPassword) === user.password) {
         const { _id: id, username, profileImage, isPrivate } = user;
@@ -86,7 +91,7 @@ export const createUser = async (req, res) => {
       //Username Taken
       res.status(403).json({ success: false });
     } else {
-      const key = new NodeRSA(process.env.PRIVATE_KEY);
+      const key = new NodeRSA(PRIVATE_KEY);
       const decryptedPassword = key.decrypt(encryptedPassword, "utf8");
       const newUser = new User({
         username,
