@@ -63,9 +63,6 @@ export const logIn = async (req, res) => {
       // Wrong Username
       res.status(403).json({ success: false });
     } else {
-      
-      console.log(PRIVATE_KEY)
-      console.log(PRIVATE_KEY.replace(/\\n/gm, "\n"))
       const key = new NodeRSA(PRIVATE_KEY);
       const decryptedPassword = key.decrypt(encryptedPassword, "utf8");
       if (stringHash(decryptedPassword) === user.password) {
